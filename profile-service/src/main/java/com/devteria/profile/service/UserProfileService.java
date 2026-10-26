@@ -1,5 +1,7 @@
 package com.devteria.profile.service;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
 import com.devteria.profile.dto.request.ProfileCreationRequest;
@@ -12,8 +14,6 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -31,8 +31,10 @@ public class UserProfileService {
     }
 
     public UserProfileResponse getProfile(String id) {
-        UserProfile userProfile =
-                userProfileRepository.findById(id).orElseThrow(() -> new RuntimeException("Profile not found"));
+        UserProfile userProfile = userProfileRepository
+                .findById(id)
+                .or(() -> userProfileRepository.findByUserId(id))
+                .orElseThrow(() -> new RuntimeException("Profile not found"));
 
         return userProfileMapper.toUserProfileReponse(userProfile);
     }
